@@ -86,28 +86,38 @@ void free_split(char **dirs)
 
 char *get_path(char *command)
 {
-    char *path_env = strdup(getenv("PATH"));
-    char **dirs = split_string(path_env, ':');
-    char full_path[1024];
-    int i;
-    char *result;
+/**
+ *   char *path_env = strdup(getenv("PATH"));
+ *   char **dirs = split_string(path_env, ':');
+ *   char full_path[1024];
+ *   int i;
+ *   char *result;
+ *
+ *   for (i = 0; dirs[i] != NULL; i++)
+ *   {
+ *       sprintf(full_path, "%s/%s", dirs[i], command);
+ *
+ *       if (file_exists_and_executable(full_path))
+ *       {
+ *           result = malloc(strlen(full_path) + 1);
+ *           strcpy(result, full_path);
+ *           free_split(dirs);
+ *           free(path_env);
+ *           return (result);
+ *       }
+ *   }
+ *
+ *   free_split(dirs);
+ *   free(path_env);
+ *   return (NULL);
+ */
 
-    for (i = 0; dirs[i] != NULL; i++)
-    {
-        sprintf(full_path, "%s/%s", dirs[i], command);
+    if (!command)
+        return NULL;
 
-        if (file_exists_and_executable(full_path))
-        {
-            result = malloc(strlen(full_path) + 1);
-            strcpy(result, full_path);
-            free_split(dirs);
-            free(path_env);
-            return (result);
-        }
-    }
+    if (!file_exists_and_executable(command))
+        return NULL;
 
-    free_split(dirs);
-    free(path_env);
-    return (NULL);
+    return strdup(command);
 }
 
