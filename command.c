@@ -1,46 +1,55 @@
 #include "simple_shell.h"
 
 /**
- * run_command - forks and executes a single-word command
- * @command: absolute or relative path of command
- * @shell_name: name of shell (for error messages)
+ * execute - Forks and executes command
+ * Return: Exit status of the command
  */
-void run_command(char *command, char *shell_name)
+int execute(char **args, char *prog_name)
 {
-    char *full_path;
-    int pid;
+	int pid;
+	int status;
+	char *full_path;
 
-    if (!file_exists_and_executable(command))
-    {
-        fprintf(stderr, "%s: No such file or directory\n", shell_name);
-        return;
-    }
+	full_path = _get_path(args[0]);
+	if (!full_path)
+	{
+		print_error(prog_name);
+		return (127);
+	}
 
-    full_path = strdup(command);
-    if (!full_path)
-        return;
-    pid = fork();
-    if (pid == 0)
-    {
-        char *args[2];
-        extern char **environ;
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("Fork Error");
+		if (full_path != args[0])
+			free(full_path);
+		return (1);
+	}
 
-        args[0] = command;
-        args[1] = NULL;
+	if (pid == 0)
+	{
+		if (execve(full_path, args, environ) == -1)
+		{
+			perror("Execve Error");
+			exit(2);
+		}
+	}
+	else
+	{
+		wait(&status);
+		if (WIFEXITED(status))
+			status = WEXITSTATUS(status);
+	}
 
-        execve(full_path, args, environ);
-        perror("execve");
-        free(full_path);
-        exit(1);
-    }
-    else if (pid > 0)
-    {
-        waitpid(pid, NULL, 0);
-    }
-    else
-    {
-        perror("fork");
-    }
+	if (full_path != args[0])
+		free(full_path);
+	return (status);
+}
 
-    free(full_path);
+/**
+ * print_error - Prints error in shell format
+ */
+void print_error(char *prog_name)
+{
+	fprintf(stderr, "%s: No such file or directory\n", prog_name);
 }
