@@ -9,7 +9,7 @@ int main(int argc, char **argv)
 {
     char *command;
     char *full_path;
-    size_t line_number = 1;
+    int line_number = argc;
         
     while (1)
     {
@@ -22,7 +22,6 @@ int main(int argc, char **argv)
 
         if (strlen(command) == 0)
         {
-            line_number++;
             free(command);
             continue;
         }
@@ -30,7 +29,7 @@ int main(int argc, char **argv)
         full_path = get_path(command);
 
         if (full_path == NULL)
-            fprintf(stderr, "%s: %zu: %s: not found\n", argv[0], line_number, command);
+            fprintf(stderr, "%s: No such file or directory\n", argv[0]);
         else
         {
             int pid = fork();
@@ -50,7 +49,5 @@ int main(int argc, char **argv)
         }
 
         free(command);
-        line_number++;
-
     }
 }

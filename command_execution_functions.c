@@ -27,33 +27,32 @@ char **split_string(char *str, char delim)
     char *tmp = str;
     char *token;
     char delim_str[2] = {delim, '\0'};
+    size_t i;
+    size_t j;
 
     if (!str)
         return NULL;
 
-    // First pass: count the number of tokens
     while (*tmp)
     {
         if (*tmp == delim)
             count++;
         tmp++;
     }
-    count++;  // last token
+    count++;
 
-    // Allocate array for pointers (+1 for NULL terminator)
     result = malloc((count + 1) * sizeof(char *));
     if (!result)
         return NULL;
 
-    size_t i = 0;
+    i = 0;
     token = strtok(str, delim_str);
     while (token)
     {
         result[i] = malloc(strlen(token) + 1);
         if (!result[i])
         {
-            // free previously allocated memory on failure
-            for (size_t j = 0; j < i; j++)
+            for (j = 0; j < i; j++)
                 free(result[j]);
             free(result);
             return NULL;
@@ -63,7 +62,7 @@ char **split_string(char *str, char delim)
         token = strtok(NULL, delim_str);
     }
 
-    result[i] = NULL;  // NULL-terminate the array
+    result[i] = NULL;
     return result;
 }
 
