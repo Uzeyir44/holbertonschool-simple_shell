@@ -26,12 +26,15 @@ char **split_string(char *str, char delim)
     size_t count = 0;
     char *tmp = str;
     char *token;
-    char delim_str[2] = {delim, '\0'};
+    char delim_str[2];
     size_t i;
     size_t j;
 
     if (!str)
         return NULL;
+
+    delim_str[0] = delim;
+    delim_str[1] = '0';
 
     while (*tmp)
     {

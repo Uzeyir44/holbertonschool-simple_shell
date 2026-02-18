@@ -9,7 +9,6 @@ int main(int argc, char **argv)
 {
     char *command;
     char *full_path;
-    int line_number = argc;
         
     while (1)
     {
@@ -36,8 +35,10 @@ int main(int argc, char **argv)
 
             if (pid == 0)
             {
-                char *args[] = {command, NULL};
+                char *args[2];
                 extern char **environ;
+                args[0] = command;
+                args[1] = NULL;
                 execve(full_path, args, environ);
             }
             else
@@ -50,4 +51,6 @@ int main(int argc, char **argv)
 
         free(command);
     }
+
+    return (0);
 }
