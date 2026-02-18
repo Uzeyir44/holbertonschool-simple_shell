@@ -9,6 +9,7 @@ int main(int argc, char **argv)
 {
     char *command;
     char *full_path;
+    (void)argc;
         
     while (1)
     {
