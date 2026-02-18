@@ -9,8 +9,8 @@ int main(int argc, char **argv)
 {
     char *command;
     char *full_path;
-    (void)argc;
     int status = 1;
+    (void)argc;
         
     do
     {
