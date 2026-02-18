@@ -4,10 +4,9 @@ char *get_command()
 {
     char *line = NULL;
     size_t n = 0;
-    size_t nread = getline(&line, &n, stdin);
-    size_t i;
+    ssize_t nread = getline(&line, &n, stdin);
 
-    if (nread = -1)
+    if (nread == -1)
         return (NULL);
 
     if (nread > 0)
@@ -68,9 +67,24 @@ char **split_string(char *str, char delim)
     return result;
 }
 
+void free_split(char **dirs)
+{
+    int i;
+
+    if (dirs == NULL)
+        return;
+
+    for (i = 0; dirs[i] != NULL; i++)
+    {
+        free(dirs[i]);
+    }
+
+    free(dirs);
+}
+
 char *get_path(char *command)
 {
-    char *path_env = getenv("PATH");
+    char *path_env = strdup(getenv("PATH"));
     char **dirs = split_string(path_env, ':');
     char full_path[1024];
     int i;
@@ -84,9 +98,14 @@ char *get_path(char *command)
         {
             result = malloc(strlen(full_path) + 1);
             strcpy(result, full_path);
+            free_split(dirs);
+            free(path_env);
             return (result);
         }
     }
 
+    free_split(dirs);
+    free(path_env);
     return (NULL);
 }
+
