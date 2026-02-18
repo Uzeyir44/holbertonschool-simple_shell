@@ -10,17 +10,21 @@ int main(int argc, char **argv)
     char *command;
     char *full_path;
     (void)argc;
+    int status = 1;
         
-    while (1)
+    do
     {
-        printf("$ ");
+        if (isatty(STDIN_FILENO))
+            printf("$ ");
+
+        fflush(stdout);
     
         command = get_command();
 
         if (command == NULL)
-            break;
+            status = 0;
 
-        if (strlen(command) == 0)
+        if (command != NULL && strlen(command) == 0)
         {
             free(command);
             continue;
@@ -28,9 +32,9 @@ int main(int argc, char **argv)
 
         full_path = get_path(command);
 
-        if (full_path == NULL)
+        if (full_path == NULL && status != 0)
             fprintf(stderr, "%s: No such file or directory\n", argv[0]);
-        else
+        else if(status != 0)
         {
             int pid = fork();
 
@@ -50,8 +54,9 @@ int main(int argc, char **argv)
             free(full_path);
         }
 
-        free(command);
-    }
+        if (command != NULL)
+            free(command);
+    } while(status);
 
     return (0);
 }
